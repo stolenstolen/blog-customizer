@@ -70,7 +70,6 @@ export const Select = (props: SelectProps): React.JSX.Element => {
             styles.placeholder,
             (styles as Record<string, string>)[optionClassName]
           )}
-          data-status={status}
           data-selected={!!selected?.value}
           onClick={handlePlaceHolderClick}
           role="button"
