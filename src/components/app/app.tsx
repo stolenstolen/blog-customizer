@@ -12,20 +12,8 @@ import type { CSSProperties } from 'react';
 import styles from './app.module.scss';
 
 export const App = (): React.JSX.Element => {
-  const [isOpen, setIsOpen] = useState(false);
   const [articleState, setArticleState] =
     useState<ArticleStateType>(defaultArticleState);
-  const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
-
-  const handleApply = (): void => {
-    setArticleState(formState);
-  };
-
-  const handleReset = (): void => {
-    const resetState = defaultArticleState;
-    setFormState(resetState);
-    setArticleState(resetState);
-  };
 
   return (
     <main
@@ -40,15 +28,7 @@ export const App = (): React.JSX.Element => {
         } as CSSProperties
       }
     >
-      <ArticleParamsForm
-        formState={formState}
-        isOpen={isOpen}
-        onApply={handleApply}
-        onClose={() => setIsOpen(false)}
-        onReset={handleReset}
-        onToggleOpen={() => setIsOpen((prev) => !prev)}
-        setFormState={setFormState}
-      />
+      <ArticleParamsForm onApply={setArticleState} />
       <Article />
     </main>
   );
