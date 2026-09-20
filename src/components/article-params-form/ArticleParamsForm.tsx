@@ -25,19 +25,19 @@ type ArticleParamsFormProps = {
 export const ArticleParamsForm = ({
   onApply,
 }: ArticleParamsFormProps): React.JSX.Element => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
-  const containerRef = useRef<HTMLElement | null>(null);
+  const formContainerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isFormOpen) {
       return;
     }
 
     const handleClickOutside = (event: MouseEvent): void => {
       const target = event.target;
-      if (target instanceof Node && !containerRef.current?.contains(target)) {
-        setIsOpen(false);
+      if (target instanceof Node && !formContainerRef.current?.contains(target)) {
+        setIsFormOpen(false);
       }
     };
 
@@ -46,7 +46,7 @@ export const ArticleParamsForm = ({
     return (): void => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isFormOpen]);
 
   const handleChange =
     (field: keyof ArticleStateType) =>
@@ -66,11 +66,11 @@ export const ArticleParamsForm = ({
 
   return (
     <>
-      <ArrowButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
+      <ArrowButton isOpen={isFormOpen} onClick={() => setIsFormOpen((prev) => !prev)} />
       <aside
-        ref={containerRef}
+        ref={formContainerRef}
         className={clsx(styles.container, {
-          [styles.container_open]: isOpen,
+          [styles.container_open]: isFormOpen,
         })}
       >
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -104,7 +104,7 @@ export const ArticleParamsForm = ({
             />
           </div>
 
-          <div className={`${styles.field} ${styles.fontColorField}`}>
+          <div className={clsx(styles.field, styles.fontColorField)}>
             <Select
               title="Цвет шрифта"
               options={fontColors}
@@ -112,6 +112,8 @@ export const ArticleParamsForm = ({
               onChange={handleChange('fontColor')}
             />
           </div>
+
+          <div className={styles.divider} />
 
           <div className={styles.fieldColorGroup}>
             <Select
