@@ -15,6 +15,13 @@ export const ArrowButton = ({
   isOpen,
   onClick,
 }: ArrowButtonProps): React.JSX.Element => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     /* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
     <div
@@ -23,6 +30,7 @@ export const ArrowButton = ({
       tabIndex={0}
       className={clsx(styles.container, { [styles.container_open]: isOpen })}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
     >
       <img
         src={arrow}

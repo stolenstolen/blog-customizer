@@ -1,16 +1,145 @@
+import {
+  backgroundColors,
+  contentWidthArr,
+  defaultArticleState,
+  fontColors,
+  fontFamilyOptions,
+  fontSizeOptions,
+} from '@/constants/articleProps.ts';
+import { clsx } from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
+import { RadioGroup } from 'src/ui/radio-group';
+import { Select } from 'src/ui/select';
+import { Text } from 'src/ui/text';
+
+import type { ArticleStateType, OptionType } from '@/constants/articleProps.ts';
 
 import styles from './ArticleParamsForm.module.scss';
 
-export const ArticleParamsForm = (): React.JSX.Element => {
+type ArticleParamsFormProps = {
+  onApply: (newState: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({
+  onApply,
+}: ArticleParamsFormProps): React.JSX.Element => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
+  const formContainerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!isFormOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent): void => {
+      const target = event.target;
+      if (target instanceof Node && !formContainerRef.current?.contains(target)) {
+        setIsFormOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return (): void => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isFormOpen]);
+
+  const handleChange =
+    (field: keyof ArticleStateType) =>
+    (option: OptionType): void => {
+      setFormState((prev) => ({ ...prev, [field]: option }));
+    };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    onApply(formState);
+  };
+
+  const handleResetClick = (): void => {
+    setFormState(defaultArticleState);
+    onApply(defaultArticleState);
+  };
+
   return (
     <>
-      <ArrowButton isOpen={false} onClick={() => undefined} />
-      <aside className={styles.container}>
-        <form className={styles.form}>
+      <ArrowButton isOpen={isFormOpen} onClick={() => setIsFormOpen((prev) => !prev)} />
+      <aside
+        ref={formContainerRef}
+        className={clsx(styles.container, {
+          [styles.container_open]: isFormOpen,
+        })}
+      >
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <Text
+            as="h2"
+            size={31}
+            weight={800}
+            uppercase
+            family="open-sans"
+            className={styles.title}
+          >
+            Задайте параметры
+          </Text>
+
+          <div className={styles.field}>
+            <Select
+              title="Шрифт"
+              options={fontFamilyOptions}
+              selected={formState.fontFamilyOption}
+              onChange={handleChange('fontFamilyOption')}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <RadioGroup
+              title="Размер шрифта"
+              name="font-size"
+              options={fontSizeOptions}
+              selected={formState.fontSizeOption}
+              onChange={handleChange('fontSizeOption')}
+            />
+          </div>
+
+          <div className={clsx(styles.field, styles.fontColorField)}>
+            <Select
+              title="Цвет шрифта"
+              options={fontColors}
+              selected={formState.fontColor}
+              onChange={handleChange('fontColor')}
+            />
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.fieldColorGroup}>
+            <Select
+              title="Цвет фона"
+              options={backgroundColors}
+              selected={formState.backgroundColor}
+              onChange={handleChange('backgroundColor')}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <Select
+              title="Ширина контента"
+              options={contentWidthArr}
+              selected={formState.contentWidth}
+              onChange={handleChange('contentWidth')}
+            />
+          </div>
+
           <div className={styles.bottomContainer}>
-            <Button title="Сбросить" htmlType="reset" type="clear" />
+            <Button
+              title="Сбросить"
+              htmlType="button"
+              type="clear"
+              onClick={handleResetClick}
+            />
             <Button title="Применить" htmlType="submit" type="apply" />
           </div>
         </form>

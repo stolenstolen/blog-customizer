@@ -20,13 +20,35 @@
 	width: 616px;
 	height: auto;
 	min-height: 100%;
-	padding: 50px 31px;
+	padding: 50px 30px;
 	background-color: #fff;
 	border-right: 1px solid #000;
+}
+
+.title {
+	margin: 0;
+}
+
+.field {
+	margin-top: 50px;
+}
+
+.fontColorField {
+	margin-bottom: 50px;
+}
+
+.divider {
+	width: 100%;
+	height: 1px;
+	background-color: #d7d7d7;
+}
+
+.fieldColorGroup {
+	margin-top: 50px;
 }
 
 .bottomContainer {
 	display: flex;
 	justify-content: space-between;
-	margin-top: auto;
+	margin-top: 207px;
 }
